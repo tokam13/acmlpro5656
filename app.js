@@ -3,6 +3,8 @@ const HRroutes=require('./routes/hr')
 const mongoose= require ('mongoose'); 
 const app = express();
 const PORT = 5000;
+console.log(`this server is running on port1 ${PORT}`);
+
 app.listen(PORT,()=>{
     console.log(`this server is running on port ${PORT}`);
 });

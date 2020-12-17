@@ -32,5 +32,5 @@ router.route('/:location')
     const result= await location.findOneAndUpdate({"location":req.params.location},req.body,{new:true})
     res.send(result);
 })
-
+module.exports=router
 
