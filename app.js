@@ -2,9 +2,12 @@ const express= require('express');
 const HRroutes=require('./routes/hr')
 const mongoose= require ('mongoose'); 
 const app = express();
-const PORT = 5000;
-console.log(`this server is running on port1 ${PORT}`);
+app.use(express.json());
+require('dotenv').config()
 
+const jwt=require('jsonwebtoken')
+const { nextTick } = require('process')
+const PORT = 5000;
 app.listen(PORT,()=>{
     console.log(`this server is running on port ${PORT}`);
 });
@@ -20,11 +23,7 @@ const locations=require('./models/attendance.js');
 const requests=require('./models/requests.js');
 
 */
-app.use(express.json());
-require('dotenv').config()
 
-const jwt=require('jsonwebtoken')
-const { nextTick } = require('process')
 
 app.use('',HRroutes) // if you get / go to user_routes 
 
