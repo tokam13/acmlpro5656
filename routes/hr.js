@@ -10,138 +10,220 @@ const staffMembers=require('../models/staffMembers');
 const location=require('../models/locations')
 const faculty=require('../models/faculty');
 const courseDep=require('../models/courseDep')
+
 const { async } = require('rsvp');
 
 
-router.route('/:location')
+router.route('/location')
 .post(async(req,res)=>{
-    if(req.user.department=='hr'){
-    const loc={
+ 
+    const loc=new location({
         location:req.body.location,
         remainingPlaces:req.body.remainingPlaces,
         capacity:req.body.capacity,
-        type:req.body.type
-    }
-    await location.insertOne(loc);
-    console.log("location inserted");}
-    else{
-        res.status(403).send('Acess denied')
-    }
+        type:req.body.type})
+    
+    await loc.save()
+    res.send(loc)
+    console.log("location inserted");
+    
 
 })
 .delete(async(req,res)=>{
-    if(req.user.department=='hr'){
-    const result=await location.findOneAndDelete({"locaton":req.body.location})
+   
+    const result=await location.findOneAndRemove({"location":req.body.location})
+    //console.log("deletesd")
     if(result!=null){
-        res.send(result)
+        res.send("the location deleted successfuly")
     }
     else{
         res.send("there is no data for this location")
-    }
-}else{
-    res.status(403).send('Acess denied')
+    
 }
 
 })
 .put(async(req,res)=>{
-    if(req.user.department=='hr'){
-   // res.send("enter the update ");
-    
-    const result= await location.findOneAndUpdate({"location":req.body.location},req.body,{new:true})
-    res.send(result);}
-    else{
-        res.status(403).send('Acess denied')
-    }
-
+const result= await location.findOneAndUpdate({"location":req.body.location},req.body,{new:true})
+    res.send(result);
 })
 router.route('/faculty')
 .post(async(req,res)=>{
-    if(req.user.department=='hr'){
-    const fac={
-       facultyName=req.body.facultyName,
-       department=req.body.department,
-       instructorID=req.body.instructorID
+
+    const fac=new faculty({
+       facultyName:req.body.facultyName,
+       departmentName:req.body.departmentName,
+       instructorID:req.body.instructorID
+    })
+    await fac.save();
+    async function makedep(depname){
+        const dep= new courseDep({
+            departmentName:depname
+        })
+        await dep.save();
     }
-    await faculty.insertOne(fac);
+    fac.departmentName.forEach(makedep)
+    res.send(fac);
     console.log("faculty inserted");
-   }
-   else{
-    res.status(403).send('Acess denied')
-   }
+   
+   
 })
 .put(async (req,res)=>{
-    if(req.user.departmentr=='hr'){
-        const fac=await faculty.findOneAndUpdate({"facultyName":req.body.facultyName},req.body,{new:true})
-        res.send(fac);
-    }
-    else{
-        res.status(403).send('Acess denied')
-       }   
+    const result=await faculty.findOne({"facultyName":req.body.facultyName})
+    if(result!=null){
+        async function removedep(depname){
+           const removed= await courseDep.findOneAndRemove({"departmentName":depname})
+        }
+        result.departmentName.forEach(removedep)
+       
+          const updt=  await faculty.findOneAndUpdate({"facultyName":req.body.facultyName},req.body,{new:true})
+            async function makedep(depname){
+                const dep= new courseDep({
+                    departmentName:depname
+                })
+                await dep.save();
+            }
+            updt.departmentName.forEach(makedep)
+            res.send(result); 
+            console.log("faculty updated successfuly")
+        }
+       
+       
 })
 .delete(async(req,res)=>{
-    if(req.user.department=='hr'){
-        const result=await faculty.findOneAndDelete({"facultyName":req.body.facultyName})
+    
+        const result=await faculty.findOne({"facultyName":req.body.facultyName})
         if(result!=null){
-            res.send(result)
+            async function removedep(depname){
+               const removed= await courseDep.findOneAndRemove({"departmentName":depname})
+            }
+            result.departmentName.forEach(removedep)
+           await faculty.findOneAndRemove({"facultyName":req.body.facultyName})
+            res.send("the faculty deleted successfuly")
+            
         }
         else{
             res.send("no faculty with this name")
         }
-    }
-    else{
-        res.status(403).send('Acess denied')
-       }
 })
+
 router.route('/department')
 .post(async(req,res)=>{
-    if(req.user.department=='hr'){
-    res.send("enter faculty name")
-    const fac= await faculty.findOne("facultyName"==req.body.facultyName);
+   const fac= await faculty.findOne({"facultyName":req.body.facultyName});
     if(fac!=null){
-        fac.department.push(req.body.department)
+        console.log("faculty to add department found")
+        fac.departmentName.push(req.body.departmentName)
+        const dep=new courseDep({
+            departmentName:req.body.departmentName
+        })
+        await dep.save();
+       await fac.save();
         res.send(fac)
     }
     else{
         res.send('there is no such a faculty')
     }
 
-   }
-   else{
-    res.status(403).send('Acess denied')
-   }
+  
 })
 .put(async (req,res)=>{
-    if(req.user.department=='hr'){
-        const fac=await faculty.findOneAndUpdate({"facultyName":req.body.facultyName},{"department":req.body.department},{new:true})
-        res.send(fac);
-    }
-    else{
-        res.status(403).send('Acess denied')
-       }   
-})
-.delete(async(req,res)=>{
-    if(req.user.department=='hr'){
-        res.send("enter faculty name")
-        const fac= await faculty.findOne("facultyName"==req.body.facultyName);
-       
-        
+    
+        const fac=await faculty.findOne({"facultyName":req.body.facultyName})
         if(fac!=null){
-
-            res.send("which department you want to delete");
-            const depname=req.body.department
-            const indx=fac.department.indexOf(depname)
-            fac.department.splice(indx,1);
-            res.send(fac)
+            const indx=fac.departmentName.indexOf(req.body.departmentName)
+            if(fac.departmentName.includes(req.body.departmentName)){
+                const deldep =await courseDep.findOneAndRemove({"departmentName":req.body.departmentName})
+                const addep=new courseDep({
+                    departmentName:req.body.departmentName2
+                })
+                await addep.save();
+            fac.departmentName.splice(indx,1,req.body.departmentName2)
+            await fac.save();
+            console.log("department updated successfuly")
+            res.send(fac);}
+            else{
+                res.send("the department you want to update does not exist")
+            }
         }
         else{
-            res.send('there is no such a faculty')
+            res.send('the faculty you want to update a department from it doesnt exist')
+        }
+        
+      
+})
+.delete(async(req,res)=>{
+    const fac=await faculty.findOne({"facultyName":req.body.facultyName})
+    if(fac!=null){
+        if(fac.departmentName.includes(req.body.departmentName)){
+            const deldep =await courseDep.findOneAndRemove({"departmentName":req.body.departmentName})
+         const indx=fac.departmentName.indexOf(req.body.departmentName)
+        fac.departmentName.splice(indx,1);
+        await fac.save();
+        console.log("department deleted successfuly")
+        res.send(fac);}
+        else{
+            res.send("the department you want to delete does not exist")
         }
     }
     else{
-        res.status(403).send('Acess denied')
-       }
+        res.send('the faculty you want to delete a department from it doesnt exist')
+    }
+    
+    
 })
-
-
+router.route('/course')
+.post(async(req,res)=>{
+    const dep= await courseDep.findOne({"departmentName":req.body.departmentName});
+     if(dep!=null){
+         console.log("department that you want found !")
+         dep.courseName.push(req.body.courseName)
+        await dep.save();
+         res.send(dep)
+     }
+     else{
+         res.send('there is no such a department')
+     }
+ 
+   
+ })
+ .put(async (req,res)=>{
+     
+         const dep=await courseDep.findOne({"departmentName":req.body.departmentName})
+         if(dep!=null){
+             if(dep.courseName.includes(req.body.courseName)){
+             const indx=dep.courseName.indexOf(req.body.courseName) 
+             dep.courseName.splice(indx,1,req.body.courseName2)
+             await dep.save();
+             console.log("course updated successfuly")
+             res.send(dep);}
+             else{
+                 res.send("the course you want to update does not exist")
+             }
+         }
+         else{
+             res.send('the department you want to update a course from it doesnt exist')
+         }
+         
+       
+ })
+ .delete(async(req,res)=>{
+    const dep=await courseDep.findOne({"departmentName":req.body.departmentName})
+    if(dep!=null){
+        if(dep.courseName.includes(req.body.courseName)){
+        const indx=dep.courseName.indexOf(req.body.courseName) 
+        dep.courseName.splice(indx,1)
+        await dep.save();
+        console.log("course deleted successfuly")
+        res.send(dep);}
+        else{
+            res.send("the course you want to delete does not exist")
+        }
+    }
+    else{
+        res.send('the department you want to delete a course from it doesnt exist')
+    }
+    
+     
+     
+ })
 module.exports=router
 

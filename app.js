@@ -6,7 +6,7 @@ app.use(express.json());
 require('dotenv').config()
 
 const jwt=require('jsonwebtoken')
-const { nextTick } = require('process')
+//const { nextTick } = require('process')
 const PORT = 5000;
 app.listen(PORT,()=>{
     console.log(`this server is running on port ${PORT}`);
@@ -27,12 +27,12 @@ const requests=require('./models/requests.js');
 
 app.use('',HRroutes) // if you get / go to user_routes 
 
-app.use((req,res,next)=>{ // mid,next dleware ( has to be before post)  // middleware take a third parater takes next to conplete the next routes 
+/*pp.use((req,res,next)=>{ // mid,next dleware ( has to be before post)  // middleware take a third parater takes next to conplete the next routes 
     const token=req.headers.token
 
     const result=jwt.verify(token,process.env.TOKEN_SECRET)
     next()
-})
+})*/
 
 
 app.use(express.urlencoded({extended:false}));

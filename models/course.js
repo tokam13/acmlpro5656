@@ -5,6 +5,6 @@ const course=mongoose.Schema({
      assigned:{type:Boolean,required:true},
      slotTime:{type:Number,required:true},
      slotLoction:{type:String,required:true},
-     courseName:{type:String,required:true}
+     courseName:{type:String,required:true,unique:true}
 });
 module.exports=mongoose.model('course',course);
