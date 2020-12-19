@@ -6,7 +6,7 @@ app.use(express.json());
 require('dotenv').config()
 
 const jwt=require('jsonwebtoken')
-//const { nextTick } = require('process')
+
 const PORT = 5000;
 app.listen(PORT,()=>{
     console.log(`this server is running on port ${PORT}`);
@@ -37,17 +37,6 @@ app.use('',HRroutes) // if you get / go to user_routes
 
 app.use(express.urlencoded({extended:false}));
 
-/*const url = "mongodb+srv://advancedpro:advanced1234@cluster0.lugj5.mongodb.net/acml?retryWrites=true&w=majority";///change
-const connectionParams={
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology:true
-}
-mongoose.connect(url,connectionParams).then(()=>{
-    console.log("db is successfuly connected")
-}).catch((error)=>{
-    console.log(error)
-});*/
 
 
 

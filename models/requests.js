@@ -5,6 +5,7 @@ const requests=mongoose.Schema({
        reciverID:{type:Number,required:true},
        senderID:{type:Number,required:true},
        state:{type:String,required:true},
+       date:{type:date,default:date.now},
        type:{type:String,required:true},
        dayReqOff:{type:String},
        slotReq1:String,

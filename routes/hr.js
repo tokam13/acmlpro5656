@@ -13,6 +13,7 @@ const courseDep=require('../models/courseDep')
 
 const staffIDs = require('../models/staffIDs');
 const { async } = require('rsvp');
+const attendance = require('../models/attendance');
 
 
 
@@ -299,5 +300,124 @@ router.route('/course')
             res.send('there is no staff with this id !')
         }
  })
+ router.route('/updateSalary')
+.put(async (req,res)=>{
+    const staff=await staffMembers.findOne({"id":req.body.id})
+    if(req.body.pormotion!=null){//update to pormotion
+        await staffMembers.findOneAndUpdate({"id":req.body.id},{"salary":req.body.pormotion})
+    }
+    else{
+        const mynow=Date.now
+        if(mynow.getDay()==10){
+            const minmonth=mynow.getMonth()-1;
+            const yearnow=mynow.getYear()
+            const mindate='yearnow-minmonth-11';
+            const hours=staff.hours
+            const dates=[mindate]
+            let daystart=11
+            let monthloop=minmonth
+            let yearloop=yearnow
+            let missed=0;
+            for (let i = 0; i < 30; i++) {
+                if(daystart>30){
+                   daystart=1
+                   if(monthloop==12){
+                   monthloop=1
+                   yearloop+=1
+                   }
+                   else{monthloop+=1}
+                   }
+                let thedate='yearloop-monthloop-daystart'
+               dates.push(thedate)
+                
+            }
+            await attendance.find({"id":req.body.id,"date":{$gte:mindate,$lte:mynow}},function(err,docs){
+                if(docs!=null){
+                     let missingDays=[];
+                     function findday(date) {
+                         const att=await attendance.findOne({"id":req.body.id,"date":date})
+                         if(att==null){
+                             const req=await req.findOne({"senderID":req.body.id,"date":date})
+                             if(req==null){
+                                 missingDays.push(date)
+                             }
+                         }
+                     }
+                    dates.forEach(findday)
+                    missed=missingDays.length
+                }
+                else{
+                    missed=30
+                }
+                await staffMembers.findOneAndUpdate({"id":req.body.id},{"salaryThismonth":staff.salary-((missed*staff.salary/60)+
+                    (staff.hours*staff.salary/180))
+                },{new:true})
+                if(err){
+                    res.send(err)
+                }
+                
+            })
+        }else{
+              await staffMembers.findOneAndUpdate({"id":req.body.id},{"salaryThismonth":staff.salary},{new:true})
+        }
+    }
+    if(staff!=null)
+    res.send(staff)
+    else{
+        res.send("no staff member with the entered ID !")
+    }
+})
+router.route('/addMissingSign')
+.put(async(req,res)=>{
+    const att=await attendance.findOne({"id":req.body.memberID,"date":req.body.date})
+    if(att!=null){
+        if(req.body.checkOut!=null){
+            if(att.checkOut!=null){
+                res.send("the checkOut time already exists")
+            }
+            else{
+                await attendance.findOneAndUpdate({"id":req.body.memberID,"date":req.body.date},{"checkOut":req.body.checkOut},{new:true})
+                res.send("checkout added!")
+            }
+        }
+        if(req.body.checkIn!=null){
+            if(att.checkIn!=null){
+                res.send("the checkIn time already exists")
+            }
+            else{
+                await attendance.findOneAndUpdate({"id":req.body.memberID,"date":req.body.date},{"checkIn":req.body.checkOut},{new:true})
+                res.send("checkIn added!")
+            }
+        }
+    }
+    else{
+        res.send("there is no attendence for the entered infos !")
+    }
+})
+router.route('/attendanceRecord')
+.get(async(req,res)=>{
+    await attendance.find({"id":req.body.id},function(err,docs){
+        if(docs!=null){
+            res.send(docs)
+        }
+        else{
+            res.send("no attendance record forthe entered ID")
+        }
+        if(err){
+            res.send(err)
+        }
+    })
+})
+router.route('/viewMissingHours')
+.get(async(req,res)=>{
+    const staff=await staffMembers.findOne({"id":req.body.id})
+    if(staff!=null){
+    const missingHours=168-staff.hours
+    res.send(missingHours)}
+    else{
+        res.send("no staff with this id")
+    }
+
+})
 module.exports=router
 
