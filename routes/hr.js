@@ -11,7 +11,9 @@ const location=require('../models/locations')
 const faculty=require('../models/faculty');
 const courseDep=require('../models/courseDep')
 
+const staffIDs = require('../models/staffIDs');
 const { async } = require('rsvp');
+
 
 
 router.route('/location')
@@ -225,5 +227,55 @@ router.route('/course')
      
      
  })
+ router.route('/AddstaffMember')
+ .post(async(req,res)=>{
+      const locdata=await location.findOne({"location":req.body.office})
+     let bolloc=false;
+      let idtype="";
+      let dayoff=["friday"]
+      if(locdata!=null){
+       if(locdata.remainingPlaces>0){
+           bolloc=true
+           console.log("the place found and there is enough capacity ")
+        }
+        else{
+            res.send("the office is full ,please re-enter your data")
+        }   
+    }
+    else{
+        res.send("there is no such a location ,please re-enetr your data ")
+    }
+    if(req.body.department=="hr"){
+        idtype="hr-"
+        dayoff.push("saturday")
+        let last=staffIDs[0].id.length+1
+        staffIDs[0].id.push(1)
+
+        idtype+=last
+        
+    }
+    else{
+        idtype="ac-"
+        let last=staffIDs[1].id.length+1
+        staffIDs[1].id.push(1)
+        idtype+=last
+    }
+    if(bolloc){
+    const staff=new staffMembers({
+        name:req.body.name,
+        email:req.body.email,
+        id:idtype,
+        location:req.body.location,
+        salary:req.body.salary,
+        daysOff:dayoff,
+        department:req.body.department
+}) 
+      await staff.save();
+      res.send(staff)
+      console.log("staff inserted , congrats !")
+} 
+
+ }
+ )
 module.exports=router
 
