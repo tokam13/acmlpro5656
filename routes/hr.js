@@ -227,7 +227,7 @@ router.route('/course')
      
      
  })
- router.route('/AddstaffMember')
+ router.route('/staffAffairs')
  .post(async(req,res)=>{
       const locdata=await location.findOne({"location":req.body.office})
      let bolloc=false;
@@ -237,6 +237,7 @@ router.route('/course')
        if(locdata.remainingPlaces>0){
            bolloc=true
            console.log("the place found and there is enough capacity ")
+           const locnewcap=await location.findOneAndUpdate({"location":req.body.office},{"remainingPlaces":locdata.remainingPlaces-1},{new:true})
         }
         else{
             res.send("the office is full ,please re-enter your data")
@@ -265,7 +266,7 @@ router.route('/course')
         name:req.body.name,
         email:req.body.email,
         id:idtype,
-        location:req.body.location,
+        officeLocation:req.body.office,
         salary:req.body.salary,
         daysOff:dayoff,
         department:req.body.department
@@ -277,5 +278,26 @@ router.route('/course')
 
  }
  )
+ .put(async (req,res)=>{
+      const staff=await staffMembers.findOneAndUpdate({"id":req.body.id},req.body,{new:true})
+      if(staff!=null){
+         res.send(staff)
+         console.log("staff member updated successfully !")
+      }
+      else{
+          res.send("the employee you are tring to update doesnot exist !")
+      }
+ } )
+ .delete(async(req,res)=>{
+        const staff= await staffMembers.findOne({"id":req.body.id});
+        if(staff!=null){
+        const loc =await location.findOne({"location":staff.officeLocation})
+        await location.findOneAndUpdate({"location":loc.location},{"remainingPlaces":loc.remainingPlaces+1},{new:true})
+        await staffMembers.findOneAndDelete({"id":req.body.id})
+        res.send("the staff member deleted successfully !")}
+        else{
+            res.send('there is no staff with this id !')
+        }
+ })
 module.exports=router
 

@@ -2,9 +2,8 @@ const { Double } = require('mongodb');
 const mongoose=require('mongoose');
 const staffMembers=mongoose.Schema({
     email:{type:String, required:true, unique:true},
-     password:{type:String,default:"123456"},
-     id:{type:String,////3aiza y increment
-    unique:true},
+    password:{type:String,default:"123456"},
+    id:{type:String,unique:true},
     name:{type:String,required:true},
     salary:{type:Number,required:true},
     officeLocation:{type:String},

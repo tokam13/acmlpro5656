@@ -1,4 +1,4 @@
-const staffIDs=[{department:"hr",id:[1]},
-          {department :"ac",id:[1]}]
+const staffIDs=[{department:"hr",id:[]},
+          {department :"ac",id:[]}]
    
 module.exports=staffIDs;
