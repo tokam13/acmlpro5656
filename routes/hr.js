@@ -17,7 +17,7 @@ const attendance = require('../models/attendance');
 
 
 
-router.route('/location')
+router.route('/locationAffairs')
 .post(async(req,res)=>{
  
     const loc=new location({
@@ -49,7 +49,7 @@ router.route('/location')
 const result= await location.findOneAndUpdate({"location":req.body.location},req.body,{new:true})
     res.send(result);
 })
-router.route('/faculty')
+router.route('/facultyAffairs')
 .post(async(req,res)=>{
 
     const fac=new faculty({
@@ -109,7 +109,7 @@ router.route('/faculty')
         }
 })
 
-router.route('/department')
+router.route('/departmentAffairs')
 .post(async(req,res)=>{
    const fac= await faculty.findOne({"facultyName":req.body.facultyName});
     if(fac!=null){
@@ -173,7 +173,7 @@ router.route('/department')
     
     
 })
-router.route('/course')
+router.route('/courseAffairs')
 .post(async(req,res)=>{
     const dep= await courseDep.findOne({"departmentName":req.body.departmentName});
      if(dep!=null){
@@ -230,7 +230,13 @@ router.route('/course')
  })
  router.route('/staffAffairs')
  .post(async(req,res)=>{
+     let {office,email,department,salary,name}=req.body
+     if(!office||!email||!department||!salary||!name){
+         res.send("please enter unique email,name,salary,office,department")
+     }
       const locdata=await location.findOne({"location":req.body.office})
+     // const mail=await staffMembers.findOne({"email":req.body.email})
+     
      let bolloc=false;
       let idtype="";
       let dayoff=["friday"]
@@ -302,73 +308,22 @@ router.route('/course')
  })
  router.route('/updateSalary')
 .put(async (req,res)=>{
-    const staff=await staffMembers.findOne({"id":req.body.id})
-    if(req.body.pormotion!=null){//update to pormotion
-        await staffMembers.findOneAndUpdate({"id":req.body.id},{"salary":req.body.pormotion})
-    }
-    else{
-        const mynow=Date.now
-        if(mynow.getDay()==10){
-            const minmonth=mynow.getMonth()-1;
-            const yearnow=mynow.getYear()
-            const mindate='yearnow-minmonth-11';
-            const hours=staff.hours
-            const dates=[mindate]
-            let daystart=11
-            let monthloop=minmonth
-            let yearloop=yearnow
-            let missed=0;
-            for (let i = 0; i < 30; i++) {
-                if(daystart>30){
-                   daystart=1
-                   if(monthloop==12){
-                   monthloop=1
-                   yearloop+=1
-                   }
-                   else{monthloop+=1}
-                   }
-                let thedate='yearloop-monthloop-daystart'
-               dates.push(thedate)
-                
-            }
-            await attendance.find({"id":req.body.id,"date":{$gte:mindate,$lte:mynow}},function(err,docs){
-                if(docs!=null){
-                     let missingDays=[];
-                     function findday(date) {
-                         const att=await attendance.findOne({"id":req.body.id,"date":date})
-                         if(att==null){
-                             const req=await req.findOne({"senderID":req.body.id,"date":date})
-                             if(req==null){
-                                 missingDays.push(date)
-                             }
-                         }
-                     }
-                    dates.forEach(findday)
-                    missed=missingDays.length
-                }
-                else{
-                    missed=30
-                }
-                await staffMembers.findOneAndUpdate({"id":req.body.id},{"salaryThismonth":staff.salary-((missed*staff.salary/60)+
-                    (staff.hours*staff.salary/180))
-                },{new:true})
-                if(err){
-                    res.send(err)
-                }
-                
-            })
-        }else{
-              await staffMembers.findOneAndUpdate({"id":req.body.id},{"salaryThismonth":staff.salary},{new:true})
-        }
-    }
-    if(staff!=null)
-    res.send(staff)
+    if(req.body.id==null || req.body.newSalary==null){
+        res.send("please enter id and newSalary ")
+    }else{
+    const staff=await staffMembers.findOneAndUpdate({"id":req.body.id},{"salary":req.body.newSalary})
+
+    if(staff!=null){
+    res.send(staff)}
     else{
         res.send("no staff member with the entered ID !")
-    }
+    }}
 })
 router.route('/addMissingSign')
 .put(async(req,res)=>{
+    if(req.body.id==null||req.body.date==null){
+        res.send("please enter id and date to update the record")
+    }
     const att=await attendance.findOne({"id":req.body.memberID,"date":req.body.date})
     if(att!=null){
         if(req.body.checkOut!=null){
@@ -394,7 +349,7 @@ router.route('/addMissingSign')
         res.send("there is no attendence for the entered infos !")
     }
 })
-router.route('/attendanceRecord')
+router.route('/viewAtttendanceRecord')
 .get(async(req,res)=>{
     await attendance.find({"id":req.body.id},function(err,docs){
         if(docs!=null){
@@ -408,14 +363,88 @@ router.route('/attendanceRecord')
         }
     })
 })
-router.route('/viewMissingHours')
+router.route('/viewMissingHoursOrDays')
 .get(async(req,res)=>{
     const staff=await staffMembers.findOne({"id":req.body.id})
-    if(staff!=null){
+    //res.send(staff)
+    if(staff!=null)
+    {if(req.body.type=="hours"){
+    let finl=""
     const missingHours=168-staff.hours
-    res.send(missingHours)}
+    if(missingHours<0){
+       finl="your extra hours : "
+       finl+=missingHours*-1
+    }
     else{
-        res.send("no staff with this id")
+        finl="your missong hours : "
+        finl+=missingHours
+    }
+    res.send(finl)
+   }
+    if(req.body.type=="days"){
+        const nowdate=new Date()
+        
+        let nowday=nowdate.getDate()
+        let nowmonth=nowdate.getMonth()
+        let nowyear=nowdate.getFullYear()
+        let missedday=[]
+        let monthstart=nowmonth
+        let yearstart=nowyear
+        let dayof=[6]
+        const dayoff2=staff.daysOff.pop()
+        if(dayoff2=="saturday")
+           dayof.push(0)
+        if(dayoff2=="sunday") 
+        dayof.push(1)  
+        if(dayoff2=="moday")
+        dayof.push(2)
+        if(dayoff2=="tuesday")
+        dayof.push(3)
+        if(dayoff2=="wensday")
+        dayof.push(4)
+        if(dayoff2=="thursday")
+        dayof.push(5)
+        if(nowday<=10){
+            nowday+=30
+            if(monthstart==0){
+               yearstart-=1
+               monthstart=11
+            }
+            else{
+                monthstart-=1
+            }
+
+        }
+        let datloop=1
+        for (let startday = 11; startday <=nowday; startday++) {
+            if(startday>30){
+                startday=datloop
+                datloop+=1
+            }
+             let ttoday=new Date()
+             //yearstart-monthstart-startday
+             ttoday.setDate(startday)
+             ttoday.setMonth(monthstart)
+             ttoday.setFullYear(yearstart)
+            const element = await attendance.findOne({"id":staff.id,"date":ttoday})
+            if(element==null){
+                missedday.push(ttoday)
+            }
+            
+        }
+        let missdayfinal=[]
+        for(let i=0;i<missedday.length;i++){
+             if(missedday[i].getDay()!=6&&missedday[i]!=dayof[1]){
+                 missdayfinal.push(missedday[i])
+             }
+        }
+        res.send(missdayfinal)
+    }
+    else{
+        res.send("please enter days or hours")
+    }}
+    else{
+        res.send("there is no staff with this id")
     }
 
 })

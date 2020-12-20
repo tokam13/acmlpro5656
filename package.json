@@ -2,8 +2,13 @@
   "name": "acmlpro5656",
   "version": "1.0.0",
   "main": "index.js",
+  "jest": {
+    "testEnvironment": "node" 
+    },
+   
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",

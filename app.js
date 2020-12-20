@@ -1,41 +1,25 @@
 const express= require('express');
+
 const HRroutes=require('./routes/hr')
-const mongoose= require ('mongoose'); 
 const app = express();
-app.use(express.json());
-require('dotenv').config()
+const mongoose= require ('mongoose'); 
+//const bcryptjs=require('bcrypt.js');
+//const jwt =require('jsonwebtoken');
+app.listen(process.env.PORT,()=>{
+    console.log("this server is running on port "+process.env.PORT);
+});
 
-const jwt=require('jsonwebtoken')
-
-const PORT = 5000;
+/*const PORT = 5000;
 app.listen(PORT,()=>{
     console.log(`this server is running on port ${PORT}`);
-});
-/*
-const staffMembers = require('./models/staffMembers.js');
-const attendance=require('./models/attendance.js');
-const course=require('./models/course.js');
-const courseDep=require('./models/courseDep.js');
-const coverage=require('./models/coverage.js');
-const faculty=require('./models/faculty.js');
-const instructors=require('./models/instructors.js');
-const locations=require('./models/attendance.js');
-const requests=require('./models/requests.js');
+});*/
+app.use(express.json());
+//app.use(express.urlencoded({extended:false}));
+//require('dotenv').config()
 
-*/
+app.use('',HRroutes) 
 
-
-app.use('',HRroutes) // if you get / go to user_routes 
-
-/*pp.use((req,res,next)=>{ // mid,next dleware ( has to be before post)  // middleware take a third parater takes next to conplete the next routes 
-    const token=req.headers.token
-
-    const result=jwt.verify(token,process.env.TOKEN_SECRET)
-    next()
-})*/
-
-
-app.use(express.urlencoded({extended:false}));
+module.exports.app=app;
 
 
 

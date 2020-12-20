@@ -1,6 +1,7 @@
 
 const mongoose=require('mongoose');
 const router = require('../routes/hr');
+
 const attendance=mongoose.Schema({
     id:{ type:String, required:true},
     date:{ type:Date,required:true},
