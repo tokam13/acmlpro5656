@@ -1,5 +1,5 @@
 const express= require('express');
-
+const amRoutes=require('./routes/am')
 const HRroutes=require('./routes/hr')
 const app = express();
 const mongoose= require ('mongoose'); 
@@ -17,8 +17,8 @@ app.use(express.json());
 //app.use(express.urlencoded({extended:false}));
 //require('dotenv').config()
 
-app.use('',HRroutes) 
-
+//app.use('',HRroutes) 
+app.use('',amRoutes)
 module.exports.app=app;
 
 
