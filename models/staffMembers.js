@@ -10,6 +10,7 @@ const staffMembers=mongoose.Schema({
     officeLocation:{type:String},
     daysOff:{type:Array },
     department:{ type:String,required:true},
+    courseName:{type:String},
     role:{type:String},
     hours:{type:Number,default:0},
     missingDays:{type:Number,default:30}

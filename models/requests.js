@@ -13,7 +13,9 @@ const requests=mongoose.Schema({
        type:{type:String,required:true},
        dayReqOff:{type:Date},
        reason:{type:String},
-     
+       slotTime:String,
+       slotLoc:String,
+       slotDay:String,
 
        slotReq1:String,
        slotReq2:String

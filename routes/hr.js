@@ -3,9 +3,8 @@ const router=express.Router();
 const bcrypt=require('bcrypt')
 
 require('dotenv').config()
-
 const jwt=require('jsonwebtoken');
-
+const key = 'asdfghjkl'
 const staffMembers=require('../models/staffMembers');
 const location=require('../models/locations')
 const faculty=require('../models/faculty');
@@ -19,7 +18,10 @@ const attendance = require('../models/attendance');
 
 router.route('/locationAffairs')
 .post(async(req,res)=>{
- 
+    const token = req.header('auth-token')
+    const x = jwt.verify(token, key) 
+    const hr= staffMembers.findOne({id: x.id })
+    if(hr.department=="hr"){
     const loc=new location({
         location:req.body.location,
         remainingPlaces:req.body.remainingPlaces,
@@ -30,7 +32,11 @@ router.route('/locationAffairs')
     res.send(loc)
     console.log("location inserted");
     
-
+    }
+    else{
+        res.status()
+        res.send("only hr can access this route")
+    }
 })
 .delete(async(req,res)=>{
    

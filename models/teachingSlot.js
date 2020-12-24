@@ -5,7 +5,7 @@ const teachingSlot=mongoose.Schema({
       slotLoc:{type:String,required:true},
       slotDay:{type:String,required:true},
       courseName:{type:String,required:true},
-      slotDate:{type:Date,required:true}
+      slotDate:{type:Date}
 })
 teachingSlot.index({staffID:1,slotTime:1,slotDay:1},{unique:true})
 module.exports=mongoose.model('teachingSlot',teachingSlot);
