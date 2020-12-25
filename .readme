@@ -201,3 +201,143 @@ Example for response:the department with the course deleted
     "departmentName": "math",
     "__v": 6
 }
+13)Functionality: ADD  a new staff member to the system
+  -Route:/staffAffairs
+  -Request type : POST
+  -parameters :{office, unique email,department,salary,name}
+Example for using request body:
+Request type:POST
+Request body: {"name":"sara","office":"c3","email":"sara@guc.edu","salary":"20000","department":"csen"}
+Example for response:the added staff member with the default password
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5ca0e93be4e0a50c2f0a8",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 20000,
+    "department": "csen",
+    "role": "academicMember",
+    "__v": 0
+}
+14)Functionality: UPDATE existing staff member
+  -Route:/staffAffairs
+  -Request type : PUT
+  -parameters :the staff member id and the update you want to make
+Example for using request body:
+Request type:PUT
+Request body:{"id":"ac-2","department":"mecha"}
+Example for the response : the staff member with the update 
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5ca0e93be4e0a50c2f0a8",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 20000,
+    "department": "mecha",
+    "role": "academicMember",
+    "__v": 0
+}
+15)Functionality:DELETE already existing staff member by his/her id
+  -Route:/staffAffairs
+  -Request type : DELETE
+  -parameters :the staff member id 
+Example for using request body:
+Request type:DELETE
+Request body:{"id":"ac-2"}
+Example for response: the staff member deleted successfully !
+16)functionalty : Manually add a missing sign in/sign out record of a staff member except for himself/herself.
+  -Route:/addMissingSign
+  -Request type : PUT
+  -parameters :1)the staff member id 
+               2) the date of the attendance 
+Example for using request body:
+Request type:PUt
+Request body: "id":"ac-2",
+   
+   "date":"2020-12-24T23:01:42.110+00:00",
+   "checkOut":"2020-12-24"
+Example for response: checkout added!
+17)Functionality : View any staff member attendance record by his/her id
+    -Route:/viewAtttendanceRecord
+    -Request type : GET
+    -parameters :  the staff member id
+Example for using request body:
+Request type:Get
+Request body: {"id":"ac-2" }
+Example for response:
+[
+    {
+        "_id": "5fe51dd6b73f0d20b0d845a4",
+        "id": "ac-2",
+        "date": "2020-12-24T23:01:42.110Z",
+        "checkIn": "2020-12-24T23:01:42.110Z",
+        "checkOut": "2020-12-24T00:00:00.000Z",
+        "__v": 0
+    }
+]
+18)Functionality : View staff members with missing hours/days by his/her id.
+    -Route:/viewMissingHoursOrDays
+    -Request type : GET
+    -parameters : 1) the staff member id
+                  2) the type either days or hours
+Example for using request body:
+Request type:Get
+Example for response:
+Request body : {"id":"ac-2","type":"days" }
+Example for response:
+[
+    "2020-12-11T12:01:30.027Z",
+    "2020-12-13T12:01:30.444Z",
+    "2020-12-14T12:01:30.643Z",
+    "2020-12-15T12:01:30.848Z",
+    "2020-12-16T12:01:31.060Z",
+    "2020-12-17T12:01:31.257Z",
+    "2020-12-18T12:01:31.466Z",
+    "2020-12-20T12:01:31.881Z",
+    "2020-12-21T12:01:32.097Z",
+    "2020-12-22T12:01:32.297Z",
+    "2020-12-23T12:01:32.501Z",
+    "2020-12-24T12:01:32.711Z",
+    "2020-12-25T12:01:32.925Z"
+]
+19) Functionality : update salary of a staff member by his/her id and the updated salary
+   -Route:/updateSalary
+    -Request type : PUT
+    -parameters : 1) the staff member id
+                  2) the newSalary update 
+Example for using request body:
+Request type:PUT
+Request body: {"id":"ac-2","newSalary":50000 }
+Example for response : the staff member profile along with the newSalary
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5d47219fc7a20784f0292",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 50000,
+    "department": "csen",
+    "role": "academicMember",
+    "__v": 0
+}
+

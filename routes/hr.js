@@ -282,6 +282,7 @@ router.route('/courseAffairs')
      ////default academic member
      let bolloc=false;
       let idtype="";
+      let rol=""
       let dayoff=["friday"]
       if(locdata!=null){
        if(locdata.remainingPlaces>0){
@@ -307,6 +308,7 @@ router.route('/courseAffairs')
     }
     else{
         idtype="ac-"
+         rol="academicMember"
         let last=staffIDs[1].id.length+1
         staffIDs[1].id.push(1)
         idtype+=last
@@ -319,7 +321,8 @@ router.route('/courseAffairs')
         officeLocation:req.body.office,
         salary:req.body.salary,
         daysOff:dayoff,
-        department:req.body.department
+        department:req.body.department,
+        role:rol
 }) 
       await staff.save();
       res.send(staff)
@@ -354,7 +357,7 @@ router.route('/courseAffairs')
     if(req.body.id==null || req.body.newSalary==null){
         res.send("please enter id and newSalary ")
     }else{
-    const staff=await staffMembers.findOneAndUpdate({"id":req.body.id},{"salary":req.body.newSalary})
+    const staff=await staffMembers.findOneAndUpdate({"id":req.body.id},{"salary":req.body.newSalary},{new:true})
 
     if(staff!=null){
     res.send(staff)}
@@ -367,14 +370,14 @@ router.route('/addMissingSign')
     if(req.body.id==null||req.body.date==null){
         res.send("please enter id and date to update the record")
     }
-    const att=await attendance.findOne({"id":req.body.memberID,"date":req.body.date})
+    const att=await attendance.findOne({"id":req.body.id,"date":req.body.date})
     if(att!=null){
         if(req.body.checkOut!=null){
             if(att.checkOut!=null){
                 res.send("the checkOut time already exists")
             }
             else{
-                await attendance.findOneAndUpdate({"id":req.body.memberID,"date":req.body.date},{"checkOut":req.body.checkOut},{new:true})
+                await attendance.findOneAndUpdate({"id":req.body.id,"date":req.body.date},{"checkOut":req.body.checkOut},{new:true})
                 res.send("checkout added!")
             }
         }
