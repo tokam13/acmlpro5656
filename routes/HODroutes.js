@@ -248,20 +248,19 @@ router.route('/teachingAssignments')
     //const x = jwt.verify(token, key)   //el hagat eli ethatet fel token
     const hod = await staffMembers.findOne({"id":req.body.hodid })
     const courses=await courseDep.findOne({"departmentName":hod.department})
-    let fnl=[];
+    var fnl=[];
    // res.send(courses)
-    async function tes(courseName) {
-        console.log(courseName)
-        let slts=await teachingSlot.find({"courseName":courseName})
-        //console.log(slts)
-        if(slts.length>0){
-            fnl.push(slts)
-          
-        }
-        console.log(fnl)
-        
+   
+    courses.courseName.forEach(async(courseName)=>{
+    let slts=await teachingSlot.find({"courseName":courseName})
+    //console.log(slts)
+    if(slts.length>0){
+        fnl.push(slts)
+      
     }
-   await courses.courseName.forEach(tes)
+    console.log(fnl)
+    
+   })
   res.send(fnl)
 })
 

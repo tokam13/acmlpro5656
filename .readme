@@ -1,0 +1,203 @@
+the file that launch the project : index.js
+port number :5000
+HR FUNCTIONALITIES:
+1)-Functionality: add location to the database in module location with its location 
+   ,type and capacity
+  -Route:/locationAffairs
+  -Request type : POST
+  -parameters : 1)unique location string
+                2)integer capacity 
+                3)string type (room,office)
+Example of how to call the route: /locationAffairs
+Example for using request body:
+Request type: POST
+Request body: {"location":"c5","capacity":2,"type":"office"}
+Example for response:
+Functionality: add the location to the system
+Route: /locationAffairs
+Request type: POST
+Response: the added location 
+          ex:{
+    "_id": "5fe518030423ef2ba8203247",
+    "location": "c5",
+    "remainingPlaces": 2,
+    "capacity": 2,
+    "type": "office",
+    "__v": 0
+      }
+2)Functionality:update a location already in the database
+  -Route:/locationAffairs
+  -Request type : PUT
+  -parameters : 1)unique location string
+                2)the update .ex: "type":"room"
+  Example of how to call the route :/locationAffairs
+  Example for using request body:
+Request type: PUT
+Request body: {"location":"c5","capacity":7,"type":"room"}
+Example for response:
+Response: the UPDATED location 
+          ex:{
+    "_id": "5fe518030423ef2ba8203247",
+    "location": "c5",
+    "remainingPlaces": 7,
+    "capacity": 7,
+    "type": "room",
+    "__v": 0
+      }
+3)Functionality:delete a location with a given location string
+  -Route:/locationAffairs
+  -Request type : DELETE
+  -parameters : 1)unique location string
+Example for using request body:
+Request type: DELETE
+Request body: {"location":"c5"}
+Example for response: the location deleted successfuly
+4)Functionality:ADD a new faculty to the database in module faculty
+ -Route:/facultyAffairs
+  -Request type : POST
+  -parameters : 1)unique facultyName string
+                2)optionaly : array of departmentName
+Example for using request body:
+Request type: POST
+Request body: it is optionaly to add array of departments 
+{"facultyName":"engineering","departmentName":["cs","networks"]}
+or {"facultyName":"engineering"}
+Example for response:the INSERTED FACULTY 
+ {
+    "departmentName": [],
+    "_id": "5fe5214cda0d9521a0c57a11",
+    "facultyName": "engineering",
+    "departmentName":["cs","networks"]//optionaly
+    "__v": 0
+}
+5)Functionality:update a already inserted faculty
+ -Route:/facultyAffairs
+  -Request type : PUT
+  -parameters : 1)unique facultyName string
+                2)the update 
+Example of how to call the route :/facultyAffairs
+  Example for using request body:
+Request type: PUT
+Request body: {"facultyName":"engineering","departmentName":[mecha]}
+Example for response:
+Response: the UPDATED faculty
+{
+    "departmentName": [
+        "mecha"
+    ],
+    "_id": "5fe5214cda0d9521a0c57a11",
+    "facultyName": "engineering",
+    "__v": 0
+}
+6)Functionality: delete already existing faculty and the departments under it 
+  -Route:/facultyAffairs
+  -Request type :DELETE
+  -parameters : 1)unique facultyName string
+Example for using request body:
+Request type: DELETE
+Request body: {"facultyName":"engineering"}
+Example for response:
+Response: the faculty deleted successfuly
+7) Functionality: ADD department under a faculty
+   -Route:/departmentAffairs
+  -Request type :POST
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+Example for using request body:
+Request type: POST
+Request body: {"facultyName":"engineering","departmentName":"cs"}    
+Example for response:it return the faculty with the added department
+response:{
+    "departmentName": [
+        "cs"
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 2
+}
+8)Functionality:update department under a faculty
+ -Route:/departmentAffairs
+  -Request type :PUT
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+                3)unique departmentName2 string
+Example for using request body:
+Request type: PUT
+Request body: {"facultyName":"engineering","departmentName":"cs","departmentName2":"cs1"}    
+Example for response:it return the faculty with the UPDATED department
+{
+    "departmentName": [
+        "cs1"
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 3
+}
+9)Functionality:delete department under a faculty
+  -Route:/departmentAffairs
+  -Request type :DELETE
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+Example for using request body:
+Request type: DELETE
+Request body: {"facultyName":"engineering","departmentName":"cs"}    
+Example for response:it return the faculty with the DELETED department
+{
+    "departmentName": [
+        
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 4
+}
+10)Functionality:ADD a course under department
+  -Route:/courseAffairs
+  -Request type : POST
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: POST
+Request body: {"departmentName":"math","courseName":"math7"}      
+Example for response:
+{
+    "courseName": [
+        "math7"
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 3
+}  
+11)Functionality:UPDATE a course under a department      
+  -Route:/courseAffairs
+  -Request type : PUT
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: PUT
+Request body: {"departmentName":"math","courseName":"math7","courseName2":"math10"}
+Example for response:
+{
+    "courseName": [
+      "math10"
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 4
+}
+12)Functionality:DELETE a course under a department
+ -Route:/courseAffairs
+  -Request type : DELETE
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: DELETE
+Request body: {"departmentName":"math","courseName":"math10"}
+Example for response:the department with the course deleted
+{
+    "courseName": [
+       
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 6
+}

@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "jest": {
-    "testEnvironment": "node" 
-    },
-   
+    "testEnvironment": "node"
+  },
   "scripts": {
     "test": "jest --watch",
     "start": "nodemon index.js"
@@ -24,12 +23,14 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jest": "^26.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.8",
+    "mongoose-auto-increment": "^5.0.1",
     "nodemon": "^2.0.6",
     "supertest": "^6.0.1"
   }

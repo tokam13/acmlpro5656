@@ -1,6 +1,8 @@
 const express= require('express');
 const amRoutes=require('./routes/am')
 const HRroutes=require('./routes/hr')
+//const coorRoutes=require('./routes/coordinator')
+const HODRoutes=require('./routes/HODroutes')
 const app = express();
 const mongoose= require ('mongoose'); 
 //const bcryptjs=require('bcrypt.js');
@@ -17,8 +19,9 @@ app.use(express.json());
 //app.use(express.urlencoded({extended:false}));
 //require('dotenv').config()
 
-//app.use('',HRroutes) 
-app.use('',amRoutes)
+app.use('',HRroutes) 
+//app.use('',HODRoutes)
+//app.use('',coorRoutes)
 module.exports.app=app;
 
 

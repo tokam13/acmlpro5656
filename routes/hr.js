@@ -9,34 +9,37 @@ const staffMembers=require('../models/staffMembers');
 const location=require('../models/locations')
 const faculty=require('../models/faculty');
 const courseDep=require('../models/courseDep')
-
+const coverage=require('../models/coverage')
 const staffIDs = require('../models/staffIDs');
 const { async } = require('rsvp');
 const attendance = require('../models/attendance');
+const course = require('../models/course');
+const { findOne } = require('../models/staffMembers');
 
 
 
 router.route('/locationAffairs')
 .post(async(req,res)=>{
-    const token = req.header('auth-token')
-    const x = jwt.verify(token, key) 
-    const hr= staffMembers.findOne({id: x.id })
-    if(hr.department=="hr"){
+   // const token = req.header('auth-token')
+    //const x = jwt.verify(token, key) 
+   // const hr= staffMembers.findOne({id: x.id })
+   const l=await location.findOne({"location":req.body.location})
+   if(l==null){
     const loc=new location({
         location:req.body.location,
-        remainingPlaces:req.body.remainingPlaces,
+        remainingPlaces:req.body.capacity,
         capacity:req.body.capacity,
         type:req.body.type})
     
     await loc.save()
     res.send(loc)
     console.log("location inserted");
+   }
+   else{
+       res.send("please enter a new location name")
+   }
+   
     
-    }
-    else{
-        res.status()
-        res.send("only hr can access this route")
-    }
 })
 .delete(async(req,res)=>{
    
@@ -52,27 +55,40 @@ router.route('/locationAffairs')
 
 })
 .put(async(req,res)=>{
-const result= await location.findOneAndUpdate({"location":req.body.location},req.body,{new:true})
-    res.send(result);
+    const loc=await location.findOne({"location":req.body.location})
+    if(loc!=null){
+    if(req.body.capacity!=null){
+        let newcap=req.body.capacity
+        let remnew=loc.remainingPlaces+(newcap-loc.capacity)
+        let result= await location.findOneAndUpdate({"location":req.body.location},{"capacity":req.body.capacity,"remainingPlaces":remnew},{new:true})
+       
+    }
+    result=await location.findOneAndUpdate({"location":req.body.location},req.body,{new:true})
+    
+    
+    res.send(result);}
 })
 router.route('/facultyAffairs')
 .post(async(req,res)=>{
-
-    const fac=new faculty({
-       facultyName:req.body.facultyName,
-       departmentName:req.body.departmentName,
-       instructorID:req.body.instructorID
+    const fi=await faculty.findOne({"facultyName":req.body.facultyName})
+    if(fi==null)
+   { const fac=new faculty({
+       facultyName:req.body.facultyName
     })
     await fac.save();
-    async function makedep(depname){
+    if(req.body.departmentName!=null)
+   { async function makedep(depname){
         const dep= new courseDep({
             departmentName:depname
         })
         await dep.save();
     }
-    fac.departmentName.forEach(makedep)
+    fac.departmentName.forEach(makedep)}
     res.send(fac);
-    console.log("faculty inserted");
+    console.log("faculty inserted");}
+    else{
+        res.send("the faculty already inserted")
+    }
    
    
 })
@@ -92,7 +108,7 @@ router.route('/facultyAffairs')
                 await dep.save();
             }
             updt.departmentName.forEach(makedep)
-            res.send(result); 
+            res.send(updt); 
             console.log("faculty updated successfuly")
         }
        
@@ -121,12 +137,18 @@ router.route('/departmentAffairs')
     if(fac!=null){
         console.log("faculty to add department found")
         fac.departmentName.push(req.body.departmentName)
-        const dep=new courseDep({
+        const fin=await courseDep.findOne({"departmentName":req.body.departmentName})
+        if(fin==null)
+        {const dep=new courseDep({
             departmentName:req.body.departmentName
         })
         await dep.save();
-       await fac.save();
-        res.send(fac)
+        await fac.save();
+        res.send(fac)}
+        else{
+            res.send("this department already in this faculty ")
+        }
+      
     }
     else{
         res.send('there is no such a faculty')
@@ -185,7 +207,18 @@ router.route('/courseAffairs')
      if(dep!=null){
          console.log("department that you want found !")
          dep.courseName.push(req.body.courseName)
-        await dep.save();
+         await dep.save();
+         const cours=new course({
+            courseName:req.body.courseName 
+         }) 
+         await cours.save()
+         const covr=new coverage({
+             department:req.body.departmentName,
+             course:req.body.courseName
+         })
+         await covr.save()
+        
+        
          res.send(dep)
      }
      else{
@@ -202,6 +235,8 @@ router.route('/courseAffairs')
              const indx=dep.courseName.indexOf(req.body.courseName) 
              dep.courseName.splice(indx,1,req.body.courseName2)
              await dep.save();
+             const cors= await course.findOneAndUpdate({"courseName":req.body.courseName},{"courseName":req.body.courseName2},{new:true})
+             const cvr=await coverage.findOneAndUpdate({"course":req.body.courseName},{"course":req.body.courseName},{new:true})
              console.log("course updated successfuly")
              res.send(dep);}
              else{
@@ -221,6 +256,8 @@ router.route('/courseAffairs')
         const indx=dep.courseName.indexOf(req.body.courseName) 
         dep.courseName.splice(indx,1)
         await dep.save();
+        const crs=await course.findOneAndDelete({"courseName":req.body.courseName})
+        const cvr= await coverage.findOneAndDelete({"courseName":req.body.courseName})
         console.log("course deleted successfuly")
         res.send(dep);}
         else{
@@ -242,7 +279,7 @@ router.route('/courseAffairs')
      }
       const locdata=await location.findOne({"location":req.body.office})
      // const mail=await staffMembers.findOne({"email":req.body.email})
-     
+     ////default academic member
      let bolloc=false;
       let idtype="";
       let dayoff=["friday"]
