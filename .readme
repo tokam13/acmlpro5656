@@ -1,0 +1,340 @@
+the file that launch the project : index.js
+port number :5000
+HR FUNCTIONALITIES:
+1)-Functionality: add location to the database in module location with its location 
+   ,type and capacity
+  -Route:/locationAffairs
+  -Request type : POST
+Example of how to call the route: /locationAffairs
+Example for using request body:
+Request type: POST
+Request body: {"location":"c5","capacity":2,"type":"office"}
+Example for response:
+Functionality: add the location to the system
+Route: /locationAffairs
+Request type: POST
+Response: the added location 
+          ex:{
+    "_id": "5fe518030423ef2ba8203247",
+    "location": "c5",
+    "remainingPlaces": 2,
+    "capacity": 2,
+    "type": "office",
+    "__v": 0
+      }
+2)Functionality:update a location already in the database
+  -Route:/locationAffairs
+  -Request type : PUT
+  -parameters : 1)unique location string
+                2)the update .ex: "type":"room"
+  Example of how to call the route :/locationAffairs
+  Example for using request body:
+Request type: PUT
+Request body: {"location":"c5","capacity":7,"type":"room"}
+Example for response:
+Response: the UPDATED location 
+          ex:{
+    "_id": "5fe518030423ef2ba8203247",
+    "location": "c5",
+    "remainingPlaces": 7,
+    "capacity": 7,
+    "type": "room",
+    "__v": 0
+      }
+3)Functionality:delete a location with a given location string
+  -Route:/locationAffairs
+  -Request type : DELETE
+  -parameters : 1)unique location string
+Example for using request body:
+Request type: DELETE
+Request body: {"location":"c5"}
+Example for response: the location deleted successfuly
+4)Functionality:ADD a new faculty to the database in module faculty
+ -Route:/facultyAffairs
+  -Request type : POST
+  -parameters : 1)unique facultyName string
+                2)optionaly : array of departmentName
+Example for using request body:
+Request type: POST
+Request body: it is optionaly to add array of departments 
+{"facultyName":"engineering","departmentName":["cs","networks"]}
+or {"facultyName":"engineering"}
+Example for response:the INSERTED FACULTY 
+ {
+    "departmentName": [],
+    "_id": "5fe5214cda0d9521a0c57a11",
+    "facultyName": "engineering",
+    "departmentName":["cs","networks"]//optionaly
+    "__v": 0
+}
+5)Functionality:update a already inserted faculty
+ -Route:/facultyAffairs
+  -Request type : PUT
+  -parameters : 1)unique facultyName string
+                2)the update 
+Example of how to call the route :/facultyAffairs
+  Example for using request body:
+Request type: PUT
+Request body: {"facultyName":"engineering","departmentName":[mecha]}
+Example for response:
+Response: the UPDATED faculty
+{
+    "departmentName": [
+        "mecha"
+    ],
+    "_id": "5fe5214cda0d9521a0c57a11",
+    "facultyName": "engineering",
+    "__v": 0
+}
+6)Functionality: delete already existing faculty and the departments under it 
+  -Route:/facultyAffairs
+  -Request type :DELETE
+  -parameters : 1)unique facultyName string
+Example for using request body:
+Request type: DELETE
+Request body: {"facultyName":"engineering"}
+Example for response:
+Response: the faculty deleted successfuly
+7) Functionality: ADD department under a faculty
+   -Route:/departmentAffairs
+  -Request type :POST
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+Example for using request body:
+Request type: POST
+Request body: {"facultyName":"engineering","departmentName":"cs"}    
+Example for response:it return the faculty with the added department
+response:{
+    "departmentName": [
+        "cs"
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 2
+}
+8)Functionality:update department under a faculty
+ -Route:/departmentAffairs
+  -Request type :PUT
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+                3)unique departmentName2 string
+Example for using request body:
+Request type: PUT
+Request body: {"facultyName":"engineering","departmentName":"cs","departmentName2":"cs1"}    
+Example for response:it return the faculty with the UPDATED department
+{
+    "departmentName": [
+        "cs1"
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 3
+}
+9)Functionality:delete department under a faculty
+  -Route:/departmentAffairs
+  -Request type :DELETE
+  -parameters : 1)unique facultyName string 
+                2)unique departmentName string
+Example for using request body:
+Request type: DELETE
+Request body: {"facultyName":"engineering","departmentName":"cs"}    
+Example for response:it return the faculty with the DELETED department
+{
+    "departmentName": [
+        
+    ],
+    "_id": "5fe529e5853fdb1f20b3b50c",
+    "facultyName": "engineering",
+    "__v": 4
+}
+10)Functionality:ADD a course under department
+  -Route:/courseAffairs
+  -Request type : POST
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: POST
+Request body: {"departmentName":"math","courseName":"math7"}      
+Example for response:
+{
+    "courseName": [
+        "math7"
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 3
+}  
+11)Functionality:UPDATE a course under a department      
+  -Route:/courseAffairs
+  -Request type : PUT
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: PUT
+Request body: {"departmentName":"math","courseName":"math7","courseName2":"math10"}
+Example for response:
+{
+    "courseName": [
+      "math10"
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 4
+}
+12)Functionality:DELETE a course under a department
+ -Route:/courseAffairs
+  -Request type : DELETE
+  -parameters : 1)unique departmentName string 
+                2)unique courseName string
+Example for using request body:
+Request type: DELETE
+Request body: {"departmentName":"math","courseName":"math10"}
+Example for response:the department with the course deleted
+{
+    "courseName": [
+       
+    ],
+    "_id": "5fe52b35b4bd5a28e025eee9",
+    "departmentName": "math",
+    "__v": 6
+}
+13)Functionality: ADD  a new staff member to the system
+  -Route:/staffAffairs
+  -Request type : POST
+  -parameters :{office, unique email,department,salary,name}
+Example for using request body:
+Request type:POST
+Request body: {"name":"sara","office":"c3","email":"sara@guc.edu","salary":"20000","department":"csen"}
+Example for response:the added staff member with the default password
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5ca0e93be4e0a50c2f0a8",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 20000,
+    "department": "csen",
+    "role": "academicMember",
+    "__v": 0
+}
+14)Functionality: UPDATE existing staff member
+  -Route:/staffAffairs
+  -Request type : PUT
+  -parameters :the staff member id and the update you want to make
+Example for using request body:
+Request type:PUT
+Request body:{"id":"ac-2","department":"mecha"}
+Example for the response : the staff member with the update 
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5ca0e93be4e0a50c2f0a8",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 20000,
+    "department": "mecha",
+    "role": "academicMember",
+    "__v": 0
+}
+15)Functionality:DELETE already existing staff member by his/her id
+  -Route:/staffAffairs
+  -Request type : DELETE
+  -parameters :the staff member id 
+Example for using request body:
+Request type:DELETE
+Request body:{"id":"ac-2"}
+Example for response: the staff member deleted successfully !
+16)functionalty : Manually add a missing sign in/sign out record of a staff member except for himself/herself.
+  -Route:/addMissingSign
+  -Request type : PUT
+  -parameters :1)the staff member id 
+               2) the date of the attendance 
+Example for using request body:
+Request type:PUt
+Request body: "id":"ac-2",
+   
+   "date":"2020-12-24T23:01:42.110+00:00",
+   "checkOut":"2020-12-24"
+Example for response: checkout added!
+17)Functionality : View any staff member attendance record by his/her id
+    -Route:/viewAtttendanceRecord
+    -Request type : GET
+    -parameters :  the staff member id
+Example for using request body:
+Request type:Get
+Request body: {"id":"ac-2" }
+Example for response:
+[
+    {
+        "_id": "5fe51dd6b73f0d20b0d845a4",
+        "id": "ac-2",
+        "date": "2020-12-24T23:01:42.110Z",
+        "checkIn": "2020-12-24T23:01:42.110Z",
+        "checkOut": "2020-12-24T00:00:00.000Z",
+        "__v": 0
+    }
+]
+18)Functionality : View staff members with missing hours/days by his/her id.
+    -Route:/viewMissingHoursOrDays
+    -Request type : GET
+    -parameters : 1) the staff member id
+                  2) the type either days or hours
+Example for using request body:
+Request type:Get
+Example for response:
+Request body : {"id":"ac-2","type":"days" }
+Example for response:
+[
+    "2020-12-11T12:01:30.027Z",
+    "2020-12-13T12:01:30.444Z",
+    "2020-12-14T12:01:30.643Z",
+    "2020-12-15T12:01:30.848Z",
+    "2020-12-16T12:01:31.060Z",
+    "2020-12-17T12:01:31.257Z",
+    "2020-12-18T12:01:31.466Z",
+    "2020-12-20T12:01:31.881Z",
+    "2020-12-21T12:01:32.097Z",
+    "2020-12-22T12:01:32.297Z",
+    "2020-12-23T12:01:32.501Z",
+    "2020-12-24T12:01:32.711Z",
+    "2020-12-25T12:01:32.925Z"
+]
+19) Functionality : update salary of a staff member by his/her id and the updated salary
+   -Route:/updateSalary
+    -Request type : PUT
+    -parameters : 1) the staff member id
+                  2) the newSalary update 
+Example for using request body:
+Request type:PUT
+Request body: {"id":"ac-2","newSalary":50000 }
+Example for response : the staff member profile along with the newSalary
+{
+    "password": "123456",
+    "daysOff": [
+        "friday"
+    ],
+    "hours": 0,
+    "missingDays": 30,
+    "_id": "5fe5d47219fc7a20784f0292",
+    "name": "sara",
+    "email": "sara@guc.edu",
+    "id": "ac-2",
+    "officeLocation": "c3",
+    "salary": 50000,
+    "department": "csen",
+    "role": "academicMember",
+    "__v": 0
+}
+
